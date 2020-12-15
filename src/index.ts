@@ -22,6 +22,8 @@ import {
   RawPaddlePaymentSucceededAlert,
   RawPaddleSubscriptionCancelledAlert,
   RawPaddleSubscriptionCreatedAlert,
+  RawPaddleSubscriptionPaymentFailedAlert,
+  RawPaddleSubscriptionPaymentRefundedAlert,
   RawPaddleSubscriptionPaymentSucceededAlert,
   RawPaddleSubscriptionUpdatedAlert,
   RawPaddleWebhookAlert,
@@ -60,6 +62,8 @@ import {
   PaddleSdkPaymentSucceededEvent,
   PaddleSdkSubscriptionCancelledEvent,
   PaddleSdkSubscriptionCreatedEvent,
+  PaddleSdkSubscriptionPaymentFailedEvent,
+  PaddleSdkSubscriptionPaymentRefundedEvent,
   PaddleSdkSubscriptionPaymentSucceededEvent,
   PaddleSdkSubscriptionUpdatedEvent,
   PaddleSdkUpdateSubscriptionRequest,
@@ -139,6 +143,10 @@ export class PaddleSdk<TMetadata = any> {
         return this.parseSubscriptionCancelledWebhookEvent(body)
       case 'subscription_payment_succeeded':
         return this.parseSubscriptionPaymentSucceededWebhookEvent(body)
+      case 'subscription_payment_failed':
+        return this.parseSubscriptionPaymentFailedWebhookEvent(body)
+      case 'subscription_payment_refunded':
+        return this.parseSubscriptionPaymentRefundedWebhookEvent(body)
     }
 
     // istanbul ignore next
@@ -375,6 +383,77 @@ export class PaddleSdk<TMetadata = any> {
       unitPrice,
       price: quantity * unitPrice,
       customerId: convertApiInteger(body.user_id),
+    }
+  }
+
+  private parseSubscriptionPaymentFailedWebhookEvent(
+    body: RawPaddleSubscriptionPaymentFailedAlert
+  ): PaddleSdkSubscriptionPaymentFailedEvent<TMetadata> {
+    return {
+      // EVENT ---
+
+      eventType: PaddleSdkWebhookEventType.SUBSCRIPTION_PAYMENT_FAILED,
+      eventId: convertApiInteger(body.alert_id),
+      eventTime: convertApiDate(body.event_time, 'DATE_TIME'),
+
+      // ORDER ---
+
+      metadata: this.parseMetadata(body.passthrough),
+      orderId: body.order_id,
+      checkoutId: body.checkout_id,
+
+      // SUBSCRIPTION ---
+
+      subscriptionId: convertApiInteger(body.subscription_id),
+      subscriptionPaymentId: convertApiInteger(body.subscription_payment_id),
+      productId: convertApiInteger(body.subscription_plan_id),
+      status: convertApiSubscriptionStatus(body.status),
+
+      // CUSTOMER ---
+
+      customerId: convertApiInteger(body.user_id),
+      customerEmail: body.email,
+      hasMarketingConsent: convertApiBoolean(body.marketing_consent),
+    }
+  }
+
+  private parseSubscriptionPaymentRefundedWebhookEvent(
+    body: RawPaddleSubscriptionPaymentRefundedAlert
+  ): PaddleSdkSubscriptionPaymentRefundedEvent<TMetadata> {
+    return {
+      // EVENT ---
+
+      eventType: PaddleSdkWebhookEventType.SUBSCRIPTION_PAYMENT_REFUNDED,
+      eventId: convertApiInteger(body.alert_id),
+      eventTime: convertApiDate(body.event_time, 'DATE_TIME'),
+
+      // ORDER ---
+
+      metadata: this.parseMetadata(body.passthrough),
+      orderId: body.order_id,
+      checkoutId: body.checkout_id,
+      refundType: convertApiRefundType(body.refund_type),
+      refundReason: body.refund_reason,
+      currency: convertApiCurrency(body.currency),
+      quantity: convertApiInteger(body.quantity),
+      amount: convertApiFloat(body.amount),
+      taxRefund: convertApiFloat(body.tax_refund),
+      feeRefund: convertApiFloat(body.fee_refund),
+      grossRefund: convertApiFloat(body.gross_refund),
+      earningsDecrease: convertApiFloat(body.earnings_decrease),
+
+      // SUBSCRIPTION ---
+
+      subscriptionId: convertApiInteger(body.subscription_id),
+      subscriptionPaymentId: convertApiInteger(body.subscription_payment_id),
+      productId: convertApiInteger(body.subscription_plan_id),
+      status: convertApiSubscriptionStatus(body.status),
+
+      // CUSTOMER ---
+
+      customerId: convertApiInteger(body.user_id),
+      customerEmail: body.email,
+      hasMarketingConsent: convertApiBoolean(body.marketing_consent),
     }
   }
 

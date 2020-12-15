@@ -89,6 +89,8 @@ dashboard to prevent `ImplementationMissing` errors being thrown.
 - [Subscription Updated](https://developer.paddle.com/webhook-reference/subscription-alerts/subscription-updated)
 - [Subscription Cancelled](https://developer.paddle.com/webhook-reference/subscription-alerts/subscription-cancelled)
 - [Subscription Payment Succeeded](https://developer.paddle.com/webhook-reference/subscription-alerts/subscription-payment-succeeded)
+- [Subscription Payment Failed](https://developer.paddle.com/webhook-reference/subscription-alerts/subscription-payment-failed)
+- [Subscription Payment Refunded](https://developer.paddle.com/webhook-reference/subscription-alerts/subscription-payment-refunded)
 
 ## Contributors
 

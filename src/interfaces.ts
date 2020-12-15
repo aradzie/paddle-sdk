@@ -15,6 +15,8 @@ export enum PaddleSdkWebhookEventType {
   'SUBSCRIPTION_UPDATED' = 'SUBSCRIPTION_UPDATED',
   'SUBSCRIPTION_CANCELLED' = 'SUBSCRIPTION_CANCELLED',
   'SUBSCRIPTION_PAYMENT_SUCCEEDED' = 'SUBSCRIPTION_PAYMENT_SUCCEEDED',
+  'SUBSCRIPTION_PAYMENT_FAILED' = 'SUBSCRIPTION_PAYMENT_FAILED',
+  'SUBSCRIPTION_PAYMENT_REFUNDED' = 'SUBSCRIPTION_PAYMENT_REFUNDED',
 }
 
 /**
@@ -597,6 +599,137 @@ export type PaddleSdkSubscriptionPaymentSucceededEvent<TMetadata> = {
 
   /** The amount earned from this payment (in the vendor's currency) */
   balanceEarnings: number
+}
+
+/** An event fired when a subscription payment is failed */
+export type PaddleSdkSubscriptionPaymentFailedEvent<TMetadata> = {
+  // EVENT ---
+
+  /** The type of this event */
+  eventType: PaddleSdkWebhookEventType.SUBSCRIPTION_PAYMENT_FAILED
+
+  /** The unique ID for this event */
+  eventId: number
+
+  /** The date and time the event was fired */
+  eventTime: Date
+
+  // ORDER ---
+
+  /** The value passed into the pay link / set via the API using the `metadata` parameter */
+  metadata: TMetadata
+
+  /** The unique order ID for this payment */
+  orderId: string
+
+  /** The unique checkout ID of the order */
+  checkoutId: string
+
+  // SUBSCRIPTION ---
+
+  /** The unique ID of the subscription */
+  subscriptionId: number
+
+  /** The unique ID of the subscription payment */
+  subscriptionPaymentId: number
+
+  /** The ID of the product the subscription is for */
+  productId: number
+
+  /** The status of the subscription */
+  status: PaddleSdkSubscriptionStatus
+
+  // CUSTOMER ---
+
+  /** The unique ID of the customer */
+  customerId: number
+
+  /** The email address of the customer */
+  customerEmail: string
+
+  /** Whether the customer has agreed to receive marketing messages */
+  hasMarketingConsent: boolean
+
+  // TODO Add the remaining properties.
+}
+
+/** An event fired when a subscription payment is refunded */
+export type PaddleSdkSubscriptionPaymentRefundedEvent<TMetadata> = {
+  // EVENT ---
+
+  /** The type of this event */
+  eventType: PaddleSdkWebhookEventType.SUBSCRIPTION_PAYMENT_REFUNDED
+
+  /** The unique ID for this event */
+  eventId: number
+
+  /** The date and time the event was fired */
+  eventTime: Date
+
+  /** The value passed into the pay link / set via the API using the `metadata` parameter */
+  metadata: TMetadata
+
+  // ORDER ---
+
+  /** The unique order ID for this payment */
+  orderId: string
+
+  /** The unique checkout ID of the order */
+  checkoutId: string
+
+  /** The type of refund */
+  refundType: PaddleSdkRefundType
+
+  /** Refund reason note */
+  refundReason: string
+
+  /** The currency of the order */
+  currency: PaddleSdkCurrency
+
+  /** The number of products or subscription seats sold in the transaction */
+  quantity: number
+
+  /** The amount refunded, partial refunds are possible */
+  amount: number
+
+  /** The amount of tax returned to the customer, in the currency of the original transaction */
+  taxRefund: number
+
+  /** The fee amount returned to the vendor, in the currency of the original transaction */
+  feeRefund: number
+
+  /** The total amount returned to the customer as a result of this refund, in the currency of the original transaction */
+  grossRefund: number
+
+  /** The amount of revenue taken from the vendor’s earnings as a result of this refund, in the currency of the original transaction */
+  earningsDecrease: number
+
+  // SUBSCRIPTION ---
+
+  /** The unique ID of the subscription */
+  subscriptionId: number
+
+  /** The unique ID of the subscription payment */
+  subscriptionPaymentId: number
+
+  /** The ID of the product the subscription is for */
+  productId: number
+
+  /** The status of the subscription */
+  status: PaddleSdkSubscriptionStatus
+
+  // CUSTOMER ---
+
+  /** The unique ID of the customer */
+  customerId: number
+
+  /** The email address of the customer */
+  customerEmail: string
+
+  /** Whether the customer has agreed to receive marketing messages */
+  hasMarketingConsent: boolean
+
+  // TODO Add the remaining properties.
 }
 
 // ----------------------------------------------------------------------------
